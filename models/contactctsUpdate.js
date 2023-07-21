@@ -3,7 +3,6 @@ const path = require("path");
 const contactsPath = path.join(__dirname, "./contacts.json");
 const { nanoid } = require("nanoid");
 
-
 const listContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath);
@@ -15,7 +14,6 @@ const listContacts = async () => {
   }
 };
 
-
 const getContactById = async (contactId) => {
   try {
     const stringId = String(contactId);
@@ -26,6 +24,11 @@ const getContactById = async (contactId) => {
   console.log(error);   
   }
 }
+
+// const human = {
+//   name: "Stanislav",
+//   lastName: "Husiev",
+// }; 
 
 const addContact = async (body) => {
   try {
@@ -58,7 +61,6 @@ const addContact = async (body) => {
 //     console.log(error);
 //   }
 // };
-
 
 
 
