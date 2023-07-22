@@ -12,7 +12,6 @@ const listContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath);
     const allContacts = JSON.parse(data);
-    console.log(allContacts);
     return allContacts;
   } catch (error) {
     console.log(error);
@@ -48,33 +47,50 @@ const addContact = async (body) => {
   }
 };
 
-// const removeContact = async (contactId) => {
-//   try {
-//     const stringId = String(contactId);
-//     const arr = await listContacts();
-//     const index = arr.findIndex(el => el.id === stringId);
-//     if (index === -1) {
-//       return null
-//     };
-//     const removedElement = arr.splice(index, 1);
-//     await fs.writeFile(contactsPath, JSON.stringify(arr, null, 2))
-//     return removedElement;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+const removeContact = async (contactId) => {
+  try {
+    const stringId = String(contactId);
+    const arr = await listContacts();
+    const index = arr.findIndex(el => el.id === stringId);
+    if (index === -1) {
+      return null
+    };
+    const removedElement = arr.splice(index, 1);
+    await fs.writeFile(contactsPath, JSON.stringify(arr, null, 2))
+    return removedElement;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 
 
-// const updateContact = async (contactId, body) => {
+const updateContact = async (contactId, body) => {
+  try {
+    
+    const stringId = String(contactId);
+    const allContacts = await listContacts();
+    const index = allContacts.findIndex(el => el.id === stringId);
+    
+    if (index === -1) {
+      return null
+    };
 
-// };
+    allContacts[index] = {contactId, ...body};
+    
+    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
 
+    return allContacts[index];
+
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default {
   listContacts,
   getContactById,
-  // removeContact,
+  removeContact,
   addContact,
-  // updateContact,
+  updateContact,
 };
