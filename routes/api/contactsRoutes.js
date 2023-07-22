@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import contactsActions from "../../models/contactctsUpdate.js";
-import {HttpError} from '../../helpers/index';
+import contactsActions from "../../models/contactcts.js";
+import { HttpError } from "../../helpers/index.js";
+
 const contactsRouter = Router();
 
 
@@ -27,13 +28,15 @@ contactsRouter.get('/:contactId', async (req, res, next) => {
   try {
     const id = req.params.contactId;
     const result = await getContactById(id);
+
     if (!result) {
-      console.log(HttpError);
-      throw HttpError(404, "Message: Not found.");
+      throw HttpError(404, `Movie with id=${id} not found`);
     }
+
     res.json(result);
+
   } catch (error) {
-    
+    next(error);
   }
 })
 

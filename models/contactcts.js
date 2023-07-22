@@ -8,8 +8,6 @@ const __dirname = dirname(__filename);
 const contactsPath = join(__dirname, "./contacts.json");
 
 
-
-
 const listContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath);
@@ -32,22 +30,19 @@ const getContactById = async (contactId) => {
   }
 }
 
-// const human = {
-//   name: "Stanislav",
-//   lastName: "Husiev",
-// }; 
 
 const addContact = async (body) => {
   try {
     const data = await listContacts();
     
-      const contact = {
+    const contact = {
       id: nanoid(),
       ...body
     }
     data.push(contact);
     await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
     return contact;
+    
   } catch (error) {
     console.log(error);
   }
@@ -71,7 +66,9 @@ const addContact = async (body) => {
 
 
 
-// const updateContact = async (contactId, body) => {}
+// const updateContact = async (contactId, body) => {
+
+// };
 
 
 export default {
