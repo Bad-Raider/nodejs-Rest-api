@@ -1,8 +1,7 @@
 import { Router, json } from 'express';
-import Joi from 'joi';
 import contactsActions from "../../models/contactcts.js";
 import { HttpError } from "../../helpers/index.js";
-
+import schema from "../../Schema/index.js";
 const contactsRouter = Router();
 
 
@@ -15,24 +14,6 @@ const {
 } = contactsActions;
 
 
-const movieAddSchema = Joi.object({
-  name: Joi.string()
-    .alphanum()
-    .min(3)
-    .max(30)
-    .required()
-    .messages({
-    "any.required": `"title" must be exist`,
-  }),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-    .required(),
-  phone: Joi.string()
-    .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
-    .required(),  
-});
-
-
 contactsRouter.get('/', async (req, res, next) => {
   try {
     res.json(await listContacts());
@@ -41,9 +22,9 @@ contactsRouter.get('/', async (req, res, next) => {
   }
 });
 
-contactsRouter.get('/:contactId', async (req, res, next) => {
+contactsRouter.get('/:id', async (req, res, next) => {
   try {
-    const id = req.params.contactId;
+    const id = req.params.id;
     const result = await getContactById(id);
 
     if (!result) {
@@ -66,7 +47,7 @@ contactsRouter.post('/', async (req, res, next) => {
       phone,
       email,
     }
-    const { error} = movieAddSchema.validate(bodyContact);
+    const { error} = schema.addContactsSchema.validate(bodyContact);
     if (error) {
         throw HttpError(400, "message: missing required name field");
     };
@@ -79,14 +60,14 @@ contactsRouter.post('/', async (req, res, next) => {
   }
 });
 
-contactsRouter.delete('/:contactId', async (req, res, next) => {
+contactsRouter.delete('/:id', async (req, res, next) => {
   
   try {
-    const id = req.params.contactId;
+    const id = req.params.id;
     const result = await removeContact(id);
 
     if (!result) {
-      throw HttpError(404, "")
+      throw HttpError(404, "message: Not found")
     }
 
     res.json({ message: "contact deleted" })
@@ -97,25 +78,21 @@ contactsRouter.delete('/:contactId', async (req, res, next) => {
   
 });
 
-contactsRouter.put('/:contactId', async (req, res, next) => {
+contactsRouter.put('/:id', async (req, res, next) => {
   
-  const id = req.params.contactId;
-  const { name, phone, email } = req.body;
-  const bodyContact = {
-    name,
-    phone,
-    email,
-  };
-  const { error} = movieAddSchema.validate(bodyContact);
+  try {
+    const { error } = schema.updateContactsSchema.validate(req.body);
     if (error) {
-        throw HttpError(400, "message: missing required name field");
-  };
+      throw HttpError(400, "message: missing required name field");
+    };
 
-  const data = await updateContact(id, bodyContact);
-  res.status()
+    const id = req.params.id;
+    const result = await updateContact(id, req.body);
+    res.json(result);
 
-
-  res.json({ message: 'template message' })
+  } catch (error) {
+    next(error)
+  }
 });
 
 export default contactsRouter

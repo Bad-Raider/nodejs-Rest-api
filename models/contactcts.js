@@ -65,20 +65,20 @@ const removeContact = async (contactId) => {
 
 
 
-const updateContact = async (contactId, body) => {
+const updateContact = async (id, body) => {
   try {
     
-    const stringId = String(contactId);
+    const stringId = String(id);
     const allContacts = await listContacts();
     const index = allContacts.findIndex(el => el.id === stringId);
     
     if (index === -1) {
       return null
     };
-
-    allContacts[index] = {contactId, ...body};
     
-    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+    allContacts[index] = {id, ...allContacts[index], ...body};
+    
+    await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
 
     return allContacts[index];
 
