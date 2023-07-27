@@ -1,9 +1,8 @@
-import { Router, json } from 'express';
+import { Router } from 'express';
 import contactsActions from "../../models/contactcts.js";
-import { HttpError } from "../../helpers/index.js";
+// import  HttpError  from "../../helpers/HttpError.js";
 import schema from "../../Schema/index.js";
 const contactsRouter = Router();
-
 
 const {
   listContacts,
@@ -28,7 +27,8 @@ contactsRouter.get('/:id', async (req, res, next) => {
     const result = await getContactById(id);
 
     if (!result) {
-      throw HttpError(404, `message": "Not found`);
+      res.status(404)
+      throw new Error(`message": "Not found`)
     }
 
     res.json(result);
@@ -41,18 +41,14 @@ contactsRouter.get('/:id', async (req, res, next) => {
 contactsRouter.post('/', async (req, res, next) => {
   
   try {
-    const { name, phone, email } = req.body;
-    const bodyContact = {
-      name,
-      phone,
-      email,
-    }
-    const { error} = schema.addContactsSchema.validate(bodyContact);
+    
+    const  {error} = schema.addContactsSchema.validate(req.body);
     if (error) {
-        throw HttpError(400, "message: missing required name field");
+      res.status(400)
+      throw new Error(`message: missing required name field`)
     };
 
-    const newContact = await addContact(bodyContact);
+    const newContact = await addContact(req.body);
     res.status(201).json(newContact);
 
   } catch (error) {
@@ -67,7 +63,8 @@ contactsRouter.delete('/:id', async (req, res, next) => {
     const result = await removeContact(id);
 
     if (!result) {
-      throw HttpError(404, "message: Not found")
+      res.status(404);
+      throw new Error("message: Not found");
     }
 
     res.json({ message: "contact deleted" })
@@ -83,7 +80,8 @@ contactsRouter.put('/:id', async (req, res, next) => {
   try {
     const { error } = schema.updateContactsSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, "message: missing required name field");
+      res.status(400);
+      throw new Error("message: missing required name field");
     };
 
     const id = req.params.id;

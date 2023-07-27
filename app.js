@@ -19,7 +19,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message })
+    const statusCode = res.statusCode || 500;
+    res.status(statusCode).json({ message: err.message, stack: err.stack });
 });
-
 export default app;

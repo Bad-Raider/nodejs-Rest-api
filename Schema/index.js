@@ -10,21 +10,23 @@ const addContactsSchema = Joi.object({
     }),
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-  .required()
+    .required()
   ,
   phone: Joi.string()
     .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
-  .required(),  
+    .required(),
 });
 
 const updateContactsSchema = Joi.object({
   name: Joi.string()
     .min(3)
     .max(30)
+    .required()
     .messages({
       "any.required": `"title" must be exist`,
     }),
   email: Joi.string()
+    .required()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
   phone: Joi.string()
     .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
