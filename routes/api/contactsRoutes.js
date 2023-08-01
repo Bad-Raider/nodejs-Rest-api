@@ -2,12 +2,14 @@ import { Router } from 'express';
 import validateBody from '../../helpers/midleware.js';
 import schema from "../../Schema/index.js";
 import contactsControllers from "../../controllers/contactsControllers.js";
+import isValidId from '../../helpers/isValidById.js';
+
 const contactsRouter = Router();
 
 const {
-  getAll,
+getAll,
   getById,
-  deleteById,
+  // deleteById,
   add,
   updateById
 } = contactsControllers;
@@ -15,12 +17,14 @@ const {
 
 contactsRouter.get('/', getAll );
 
-contactsRouter.get('/:id', getById )
+contactsRouter.get('/:id', isValidId, getById )
 
-contactsRouter.post('/', validateBody(schema.addContactsSchema), add);
+// validateBody(schema.addContactsSchema)
+contactsRouter.post('/', add);
 
-contactsRouter.delete('/:id', deleteById );
+// contactsRouter.delete('/:id', isValidId, deleteById );
 
-contactsRouter.put('/:id', validateBody(schema.updateContactsSchema), updateById);
+// 
+contactsRouter.put('/:id', isValidId, validateBody(schema.updateContactsSchema), updateById);
 
 export default contactsRouter;

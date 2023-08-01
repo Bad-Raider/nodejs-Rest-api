@@ -1,21 +1,14 @@
-import contactsActions from "../models/contactcts.js";
 import ctrlWrapper from "../decorators/ctrlWraper.js";
+import Contact from "../models/contacts.js";
 
-const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-} = contactsActions;
 
 const getAll = async (req, res, next) => {
-        res.json(await listContacts());
+        res.json(await Contact.find());
 };
 
 const getById = async (req, res, next) => {
         const id = req.params.id;
-        const result = await getContactById(id);
+        const result = await Contact.findById(id);
         if (!result) {
             res.status(404)
             throw new Error(`message": "Not found`)
@@ -24,23 +17,27 @@ const getById = async (req, res, next) => {
 };
 
 const add = async (req, res, next) => {
-        const newContact = await addContact(req.body);
+        const newContact = await Contact.create(req.body);
         res.status(201).json(newContact);
 };
 
-const deleteById = async (req, res, next) => {
-        const id = req.params.id;
-        const result = await removeContact(id);
-        if (!result) {
-            res.status(404);
-            throw new Error("message: Not found");
-        }
-        res.json({ message: "contact deleted" })
-};
+// const deleteById = async (req, res, next) => {
+//         const id = req.params.id;
+//         const result = await removeContact(id);
+//         if (!result) {
+//             res.status(404);
+//             throw new Error("message: Not found");
+//         }
+//         res.json({ message: "contact deleted" })
+// };
 
 const updateById = async (req, res, next) => {
         const id = req.params.id;
-        const result = await updateContact(id, req.body);
+        const result = await Contact.findByIdAndUpdate(id, req.body);
+        if (!result) {
+                res.status(404);
+                throw new Error("message: Not found");
+        };
         res.json(result);
 };
 
@@ -48,6 +45,6 @@ export default {
     getAll: ctrlWrapper(getAll),
     getById: ctrlWrapper(getById),
     add: ctrlWrapper(add),
-    deleteById: ctrlWrapper(deleteById),
+//     deleteById: ctrlWrapper(deleteById),
     updateById: ctrlWrapper(updateById),
 };
