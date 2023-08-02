@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import schema from "../../schemas/index.js";
+import {addContactSchema, updateFavoriteSchema} from "../../schemas/index.js";
 import contactsControllers from "../../controllers/contactsControllers.js";
 import { validateBody, isEmptyBody, isValidId } from '../../midleware/index.js';
 
@@ -20,12 +20,12 @@ contactsRouter.get('/', getAll );
 
 contactsRouter.get('/:id', isValidId, getById)
 
-contactsRouter.post('/', isEmptyBody, validateBody(schema.addContactsSchema), add);
+contactsRouter.post('/', isEmptyBody, validateBody(addContactSchema), add);
 
 contactsRouter.delete('/:id', isValidId, deleteById );
 
-contactsRouter.put('/:id', isValidId, isEmptyBody, validateBody(schema.updateContactsSchema), updateById);
+contactsRouter.put('/:id', isValidId, isEmptyBody, validateBody(addContactSchema),  updateById);
 
-contactsRouter.patch('/:id/favorite', isValidId, isEmptyBody,  updateByIdFavorite);
+contactsRouter.patch('/:id/favorite', isValidId, isEmptyBody, validateBody(updateFavoriteSchema), updateByIdFavorite);
 
 export default contactsRouter;
