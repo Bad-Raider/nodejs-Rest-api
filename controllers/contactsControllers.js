@@ -1,4 +1,4 @@
-import ctrlWrapper from "../decorators/ctrlWraper.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import Contact from "../models/contacts.js";
 
 

@@ -17,7 +17,8 @@ const userMongooseSchema = new Schema(
       default: "starter"
     },
     token: String
-  }
+  },
+  { versionKey: false, timestamps: true }
 );
 
 export default userMongooseSchema;
