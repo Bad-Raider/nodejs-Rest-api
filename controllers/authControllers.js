@@ -1,8 +1,9 @@
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
-import  User  from "../models/user.js";
+import User from "../models/user.js";
+import bcrypt from "bcrypt";
 
 const register = async (req, res) => {
-    const { email } = req.body;
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     
     if (user) {
@@ -10,12 +11,13 @@ const register = async (req, res) => {
         throw new Error("message: Email in use");
     };
     
-    const newUser = await User.create(req.body);
+    const hashPassword = await bcrypt.hash(password, 10)
+    const newUser = await User.create({ ...req.body, password: hashPassword });
     
     res.status(201).json({
         email: newUser.email,
-        password: newUser.password,
-    })
+        subscription: newUser.subscription,
+    });
 };
 
 export default {
