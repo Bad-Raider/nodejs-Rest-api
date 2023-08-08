@@ -1,4 +1,4 @@
-import {  model } from "mongoose";
+import { model } from "mongoose";
 import { handleSaveError } from "./hooks.js";
 import { userMongooseSchema } from "../schemas/index.js";
 
