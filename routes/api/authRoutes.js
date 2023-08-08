@@ -1,9 +1,13 @@
 import { Router } from 'express';
-import { loginSchema, registerSchema } from '../../schemas/index.js';
 import { validateBody, isEmptyBody } from '../../midleware/index.js';
-const authRouter = Router();
+import { registerSchema } from '../../schemas/index.js';
+import authControllers from '../../controllers/authControllers.js';
 
-authRouter.post('/register', isEmptyBody, validateBody(registerSchema));
+
+const authRouter = Router();
+const { register } = authControllers;
+
+authRouter.post('/register', isEmptyBody, validateBody(registerSchema), register);
 
 
 
