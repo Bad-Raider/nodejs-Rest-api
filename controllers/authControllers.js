@@ -2,12 +2,11 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
+dotenv.config();
+const { SECRET_KEY } = process.env;
 
-// const { SECRET_KEY } = process.env;
-const SECRETKEY = process.env.SECRET_KEY;
-
-console.log('SECRET_KEY----', SECRETKEY);
 
 const register = async (req, res) => {
     const { email, password } = req.body;
@@ -35,9 +34,6 @@ const login = async (req, res) => {
         res.status(401);
         throw new Error("message: Email or password is wrong");
     };
-    console.log('password', password);
-    console.log("user.password", user.password);
-
     const passpordCompare = await bcrypt.compare(password, user.password);
 
     if (!passpordCompare) {
@@ -48,10 +44,16 @@ const login = async (req, res) => {
     const payload = {
         id: user._id,
     }
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "3h" });
 
-    res.json(
-        { token }
+    res.status(200).json(
+        {
+            token,
+            user: {
+                email: user.email,
+                subscription: user.subscription,
+            }
+        }
     );
 };
 
