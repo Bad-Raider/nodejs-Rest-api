@@ -3,7 +3,12 @@ import Contact from "../models/contacts.js";
 
 
 const getAll = async (req, res, next) => {
-        res.json(await Contact.find());
+
+        const { page = 1, limit = 20 } = req.query;
+        const skip = (page - 1) * limit;
+        const { _id: owner } = req.user;
+        const result = await Contact.find({ owner }, { skip, limit }).populate("owner", "_id email"); 
+        res.json(result);
 };
 
 const getById = async (req, res, next) => {
@@ -17,7 +22,8 @@ const getById = async (req, res, next) => {
 };
 
 const add = async (req, res, next) => {
-        const newContact = await Contact.create(req.body);
+        const { _id: owner } = req.user;
+        const newContact = await Contact.create({...req.body, owner});
         
         res.status(201).json(newContact);
 };

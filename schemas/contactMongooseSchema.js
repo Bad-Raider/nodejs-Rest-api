@@ -16,14 +16,15 @@ const contactMongooseSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: 'user',
+        }
     },
-    // {
-    //     owner: {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'user',
-    //     }
-    // },
-    { versionKey: false, timestamps: true }
+    {
+        versionKey: false,
+        timestamps: true
+    }
 );
 
 export default contactMongooseSchema;
