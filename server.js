@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { DB_HOST } = process.env;
+const { DB_HOST, } = process.env;
 
 
 mongoose.connect(DB_HOST)

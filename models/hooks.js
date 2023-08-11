@@ -1,9 +1,15 @@
 export const handleSaveError = (error, _, next) => {
-    error.status = 400;
-    next()
+    const { name, code } = error;
+    const status = (name === "MongoServerError" && code === 11000) ? 409 : 400;
+    error.status = status;
+    next();
 };
 
-export const handleUpdateValidate = function(next){
+
+export const handleUpdateValidate = function (next) {
     this.options.runValidators = true;
     next();
-}
+};
+
+// handleSaveError не відпрацьовує, 
+// проте у консолі все працює стабільно!!!!
