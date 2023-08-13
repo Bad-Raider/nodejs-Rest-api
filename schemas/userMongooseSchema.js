@@ -11,6 +11,9 @@ const userMongooseSchema = new Schema(
       required: [true, 'Email is required'],
       unique: true,
     },
+    avatarURL: {
+      type: String,
+    },
     subscription: {
       type: String,
       enum: ["starter", "pro", "business"],
