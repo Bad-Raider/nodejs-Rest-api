@@ -1,14 +1,18 @@
-import ctrlWrapper from "../decorators/ctrlWrapper.js";
-import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import path from "path";
 import fs from "fs/promises";
 import gravatar from "gravatar";
+import  {nanoid}  from "nanoid";
+
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import User from "../models/user.js";
+import { sendEmail } from "../helpers/index.js";
+
 
 dotenv.config();
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
 
 
 const register = async (req, res) => {
@@ -20,13 +24,26 @@ const register = async (req, res) => {
     };
     
     const avatar = gravatar.url(email, { s: '200', r: 'pg', d: 'mp' });
-    const hashPassword = await bcrypt.hash(password, 10)
+    const hashPassword = await bcrypt.hash(password, 10);
+    const verificationCode = nanoid();
+
+    console.log("verificationCode", verificationCode);
+
     const newUser = await User.create({
         ...req.body,
         password: hashPassword,
-        avatarURL: avatar, 
+        avatarURL: avatar,
+        verificationCode,
     });
+
+    const verifyEmail = {
+        to: email,
+        subject: "Hello, please confirm your email address!",
+        html: `<a href="${BASE_URL}/api/users/verify/${verificationCode}" target="blank">Verify mail <a/>`,
+    };
     
+    await sendEmail(verifyEmail);
+
     res.status(201).json({
         email: newUser.email,
         subscription: newUser.subscription,
@@ -41,6 +58,12 @@ const login = async (req, res) => {
         res.status(401);
         throw new Error("message: Email or password is wrong");
     };
+
+    if (!user.verify) { 
+        res.status(401);
+        throw new Error("message: Email is not verified"); 
+    };
+
     const passpordCompare = await bcrypt.compare(password, user.password);
 
     if (!passpordCompare) {
@@ -64,6 +87,25 @@ const login = async (req, res) => {
             }
         }
     );
+};
+
+const verify = async (req, res) => {
+    const { verificationCode } = req.params;
+    const user = await User.findOne({ verificationCode });
+    if (!user) {
+        res.status(404);
+        throw new Error("message: User is not found");
+    };
+    await User.findByIdAndUpdate(
+        user._id,
+        {
+            verify: true,
+            verificationCode: ""
+        });
+    
+    res.json({
+        message: "Verify success"
+    });
 };
 
 const current = async (req, res) => { 
@@ -101,6 +143,7 @@ const avatar = async (req, res) => {
 
 export default {
     register: ctrlWrapper(register),
+    verify: ctrlWrapper(verify),
     login: ctrlWrapper(login),
     current: ctrlWrapper(current),
     logout: ctrlWrapper(logout),

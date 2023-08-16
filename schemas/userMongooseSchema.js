@@ -22,7 +22,14 @@ const userMongooseSchema = new Schema(
     token: {
       type: String,
       default: "",
-    }
+    },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationCode: {
+      type: String,
+    },
   },
   { versionKey: false, timestamps: true }
 );
