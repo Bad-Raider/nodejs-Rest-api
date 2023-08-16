@@ -108,6 +108,33 @@ const verify = async (req, res) => {
     });
 };
 
+const resentVerifyEmail = async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({email: email});
+    
+    if (!user) {
+        res.status(404);
+        throw new Error("message: User not found");
+    };
+
+    if (user.verify) {
+        res.status(400);
+        throw new Error("message: User already verify");
+    };
+
+    const verifyEmail = {
+        to: email,
+        subject: "Hello, please confirm your email address!",
+        html: `<a href="${BASE_URL}/api/users/verify/${user.verificationCode}" target="blank">Verify mail <a/>`,
+    };
+    
+    await sendEmail(verifyEmail);
+
+    res.status(200).json({
+        message: "Email resent"
+    });
+};
+
 const current = async (req, res) => { 
     const { email, subscription } = req.user;
     res.json({email, subscription});
@@ -118,7 +145,6 @@ const logout = async (req, res) => {
     await User.findByIdAndUpdate(_id, { token: ""});
     res.status(204).json({ message: "No Content" });
 };
-
 
 const avatar = async (req, res) => {
     const avatarPath = path.resolve("public", "avatars");
@@ -144,6 +170,7 @@ const avatar = async (req, res) => {
 export default {
     register: ctrlWrapper(register),
     verify: ctrlWrapper(verify),
+    resentVerifyEmail: ctrlWrapper(resentVerifyEmail),
     login: ctrlWrapper(login),
     current: ctrlWrapper(current),
     logout: ctrlWrapper(logout),
