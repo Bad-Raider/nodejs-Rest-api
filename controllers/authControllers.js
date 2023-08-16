@@ -103,8 +103,8 @@ const verify = async (req, res) => {
             verificationCode: ""
         });
     
-    res.json({
-        message: "Verify success"
+    res.status(200).json({
+        message: "Verification successful"
     });
 };
 
@@ -112,14 +112,19 @@ const resentVerifyEmail = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({email: email});
     
+    if (!email) {
+        res.status(400);
+        throw new Error("missing required field email");
+    }
+
     if (!user) {
         res.status(404);
-        throw new Error("message: User not found");
+        throw new Error("User not found");
     };
 
     if (user.verify) {
         res.status(400);
-        throw new Error("message: User already verify");
+        throw new Error("Verification has already been passed");
     };
 
     const verifyEmail = {
