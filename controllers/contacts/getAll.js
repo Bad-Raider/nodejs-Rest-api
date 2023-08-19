@@ -3,6 +3,13 @@ import Contact from "../../models/contacts.js";
 
 const getAll = async (req, res, next) => {
 
+        const { favorite } = req.query;
+        
+        if (favorite) {
+                const result = await Contact.find({ favorite: true });
+                res.json(result); 
+        };
+
         const { page = 1, limit = 20 } = req.query;
         const skip = (page - 1) * limit;
         const { _id: owner } = req.user;
