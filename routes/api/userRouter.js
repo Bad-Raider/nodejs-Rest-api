@@ -7,7 +7,7 @@ import {
     updateAvatar,
 }
     from '../../midleware/index.js';
-import { registerSchema, loginSchema, verifySchema } from '../../schemas/index.js';
+import { registerSchema, loginSchema, verifySchema, updateSubscriptionSchema } from '../../schemas/index.js';
 import {
     register,
     login,
@@ -16,6 +16,7 @@ import {
     avatar,
     verify,
     resentVerifyEmail,
+    updateBySubscription,
 } from '../../controllers/user/index.js';
 
 
@@ -28,6 +29,7 @@ userRouter.post('/verify', validateBody(verifySchema), resentVerifyEmail);
 userRouter.post('/login', validateBody(loginSchema), login);
 userRouter.get('/current', authenticate, current);
 userRouter.post('/logout', authenticate, logout);
-userRouter.patch('/avatars', authenticate, upload.single("avatar"), updateAvatar, avatar)
+userRouter.patch('/avatars', authenticate, upload.single("avatar"), updateAvatar, avatar);
+userRouter.patch('/subscription', authenticate, validateBody(updateSubscriptionSchema), updateBySubscription);
 
 export default userRouter;

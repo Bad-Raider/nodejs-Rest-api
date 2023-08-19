@@ -27,4 +27,5 @@ contactsRouter.put('/:id', authenticate, isValidId, isEmptyBody, validateBody(ad
 
 contactsRouter.patch('/:id/favorite', authenticate, isValidId, isEmptyBody, validateBody(updateFavoriteSchema), updateByIdFavorite);
 
+
 export default contactsRouter;

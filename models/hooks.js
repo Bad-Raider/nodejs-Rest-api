@@ -11,5 +11,3 @@ export const handleUpdateValidate = function (next) {
     next();
 };
 
-// handleSaveError не відпрацьовує, 
-// проте у консолі все працює стабільно!!!!
