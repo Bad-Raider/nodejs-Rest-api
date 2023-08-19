@@ -1,19 +1,18 @@
 import { Router } from 'express';
 import {addContactSchema, updateFavoriteSchema} from "../../schemas/index.js";
-import contactsControllers from "../../controllers/contactsControllers.js";
-import { validateBody, isEmptyBody, isValidId, authenticate } from '../../midleware/index.js';
-
-
-const contactsRouter = Router();
-
-const {
+import {
   getAll,
   getById,
   deleteById,
   add,
   updateById,
   updateByIdFavorite,
-} = contactsControllers;
+} from "../../controllers/contacts/index.js";
+import { validateBody, isEmptyBody, isValidId, authenticate } from '../../midleware/index.js';
+
+
+const contactsRouter = Router();
+
 
 
 contactsRouter.get('/', authenticate, getAll );
